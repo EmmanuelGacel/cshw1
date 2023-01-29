@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####################################################
-Emmanuel and Katies Recyclying Bin
+Emmanuel and Katies Recyclying Bin - Test
 Name: junk.sh
 #####################################################
 
