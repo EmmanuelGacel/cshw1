@@ -44,5 +44,17 @@ function listAll(){
 function purgeAll(){
 	echo will purge all the files in recycle bin
 }
+# Displays the usage message. Implements basenames to get the file name.
+function helpMessage(){
+	varname=$(basename "$0")
+(cat << ENDOFTEXT
+Usage: $varname [-hlp] [list of files]
+    -h: Display help.
+    -l: List junked files.
+    -p: Purge all files.
+    [list of files] with no other arguments to junk those files.
+ENDOFTEXT
+)
 
+}
 # NEED TO CONSIDER CASE WHEN FILE ARUGMENTS ARE ENTERED
