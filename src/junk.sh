@@ -4,45 +4,56 @@
 #Name: junk.sh
 #####################################################
 
-#test git push capabilities
 
-
-function description() {
-	FOURSPACE='    '
-	echo Usage junk.sh [hlp] [list of files]$'\n'"${FOURSPACE}"-h: Display help.$'\n'"${FOURSPACE}"-l: List junked files.$'\n'"${FOURSPACE}"-p: Purge all files.$'\n'"${FOURSPACE}"[list all arguments] to junk those files.
-}
-
-if [ -z "$1" ];then #there were no arguments supplied
-	description
-	exit 1
-fi
-
-while getopts ":hlp" option; do
-	case "$option" in
-		h)
-			description ;;
-		l)
-			listAll ;;
-		p)
-			purgeAll ;;
-		?)
-			echo Error: Unknown option -${OPTARG}.
-			description
-			exit 1 ;;
-	esac
-done
-
-# Searches for a .junk directory -> If none exits, it creates one.
+# Searches for a junk directory, if not, it creates one
 cd ~
 if [ ! -d ".junk" ]; then
         mkdir .junk
 fi
 
-function listAll(){
-	echo will list all the files in recycle bin
+# Looks at the arguments given on the command line
+if [ $# -eq 0 ];then #there were no arguments supplied
+	helpmessage
+	exit 1
+elif [ $# -gt 1 ]; then
+	for FILE in $*; do #iterate through all command line arguments
+		if[ -f "$FILE" ]; then
+			mv "$FILE" ~/junk #moves the valid file to junk
+        	else
+ 			echo Warning: '"$FILE"' not found
+		fi
+	done	
+else #there is exactly one argument entered
+	findflags	
+fi
+
+function findflags(){
+	while getopts ":hlp" option; do #checks for flags, given theres one argument
+		case "$option" in
+			h)	helpmessage ;;
+			l)
+				listAll;;
+			p)
+				purgeAll ;;
+			?)
+				echo Error: Unknown option -${OPTARG}.
+				helpmessage
+				exit 1 ;;
+		esac
+	done
 }
-function purgeAll(){
-	echo will purge all the files in recycle bin
+
+function listAll(){ #lists all the files in junk directory
+	cd ~/junk
+	for FILE in junk; do
+		echo "$FILE"
+	done
+}
+function purgeAll(){ #removes all the files in the junk directory
+	cd ~/junk
+	for FILE in junk; do
+		rm "$FILE"
+	done
 }
 # Displays the usage message. Implements basenames to get the file name.
 function helpMessage(){
