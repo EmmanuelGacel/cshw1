@@ -32,6 +32,12 @@ while getopts ":hlp" option; do
 	esac
 done
 
+# Searches for a .junk directory -> If none exits, it creates one.
+cd ~
+if [ ! -d ".junk" ]; then
+        mkdir .junk
+fi
+
 function listAll(){
 	echo will list all the files in recycle bin
 }
