@@ -67,16 +67,24 @@ function purgeAll(){ #removes all the files in the junk directory
         done
 }
 
-
+help_flag=0;
+list_flag=0;
+purge_flag=0;
 #Should only be reached if there is exactly 1 flag, or solely files names
 function findflags(){ 
 	while getopts ":hlp" option; do #checks for flags, given theres one argument
 		case "$option" in
-			h)	helpMessage ;;
+			h)	helpMessage
+				help_flag=$((help_flag+1))	
+				;;
 			l)
-				listAll;;
+				listAll
+				list_flag=$((list_flag+1))
+				;;
 			p)
-				purgeAll ;;
+				purgeAll
+				purge_flag=$((purge_flag+1))
+				;;
 			?)
 				echo Error: Unknown option -${OPTARG}.
 				helpMessage
@@ -84,5 +92,10 @@ function findflags(){
 		esac
 	done
 }
-
+#Checks too see if too many valid arguments have been submitted to the command line
+#If so, the proper error message is displayed and the program exits in failure
+if [ $(( helpcounter + listcounter + purgecounter )) \> 1 ]; then
+        printf "Error: Too many options enabled.\n" >&2
+        exit 1
+fi
 
