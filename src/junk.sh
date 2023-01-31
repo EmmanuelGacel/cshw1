@@ -82,18 +82,15 @@ while getopts ":hlp" option; do #checks for flags, given theres one argument
 	case "$option" in
 		h)	
 			(( ++help_flag ))
-			echo help flag found	
 			;;
 		l)
 			(( ++list_flag ))
-			echo list flag found
 			;;
 		p)
 			(( ++purge_flag ))
-			echo purge flag found
 			;;
 		?)
-			printf " Error: Unknown option -${OPTARG}.\n" >&2
+			printf "Error: Unknown option -${OPTARG}.\n" >&2
 			helpMessage
 			exit 1 ;;
 	esac
@@ -102,9 +99,14 @@ done
 #If so, the proper error message is displayed and the program exits in failure
 if [ $(( help_flag + list_flag + purge_flag )) -gt  1 ]; then
         printf "Error: Too many options enabled.\n" >&2
+	helpMessage
         exit 1
 fi
-
+if [ $(( help_flag + list_flag + purge_flag )) -eq 1 ] && [ $# -gt 1 ];then
+	printf "Error: Too many options enabled.\n" >&2
+	helpMessage
+	exit 1 
+fi
 # Will take action given what flags were entered
 if [ "$help_flag" -eq 1 ];then
 	helpMessage
@@ -132,7 +134,7 @@ shift "$((OPTIND-1))"
 
 # $# gives the number of command line arguments. After shifting, it should just
 # be 1.
-if [ $# -gt 1 ]; then
+if [ $# -gt 1 ]; then # USER CAN ENTER MULTIPLE FILE NAMES, INCORRECT STATEMENT
     echo "Error: Too many arguments." >&2
     exit 1
 elif [ $# -eq 0 ]; then
