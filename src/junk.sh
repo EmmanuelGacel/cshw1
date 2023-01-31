@@ -49,33 +49,10 @@ ENDOFTEXT
 
 }
 
-
 # Looks at the arguments given on the command line
 if [ $# -eq 0 ];then #there were no arguments supplied
 	helpMessage
 	exit 1
-fi
-
-NUMFLAGS=0
-if [ $# -ge 1 ]; then #parse command line arguments
-	echo made it in loop
-	for arg in $@; do #iterate through all command line arguments
-		echo testing "$arg"
-		if [ "$arg" == -* ]; then #HOW TO CHECK IF ITS A FLAG?!?!
-			echo numflags is "$NUMFLAGS"
-			if [ "$NUMFLAGS" -eq 1 ]; then
-				echo Error: Too many options enabled.
-				helpMessage
-				exit 1
-			fi
-			((++NUMFLAGS))
-		fi
-	done
-	if [ "$NUMFLAGS" -eq 1 ] && [ $# -gt 1]; then #checks for a flag and file name
-		echo Error: Too many options enabled
-		helpMessage
-		exit 1
-	fi	
 fi
 
 # Searches for a junk directory, if not, it creates one
@@ -100,33 +77,44 @@ function purgeAll(){ #removes all the files in the junk directory
 help_flag=0;
 list_flag=0;
 purge_flag=0;
-#Should only be reached if there is exactly 1 flag, or solely files names
-function findflags(){ 
-	while getopts ":hlp" option; do #checks for flags, given theres one argument
-		case "$option" in
-			h)	helpMessage
-				help_flag=$((help_flag+1))	
-				;;
-			l)
-				listAll
-				list_flag=$((list_flag+1))
-				;;
-			p)
-				purgeAll
-				purge_flag=$((purge_flag+1))
-				;;
-			?)
-				echo Error: Unknown option -${OPTARG}.
-				helpMessage
-				exit 1 ;;
-		esac
-	done
-}
+#Checks for the presence of flags
+while getopts ":hlp" option; do #checks for flags, given theres one argument
+	case "$option" in
+		h)	
+			(( ++help_flag ))
+			echo help flag found	
+			;;
+		l)
+			(( ++list_flag ))
+			echo list flag found
+			;;
+		p)
+			(( ++purge_flag ))
+			echo purge flag found
+			;;
+		?)
+			printf " Error: Unknown option -${OPTARG}.\n" >&2
+			helpMessage
+			exit 1 ;;
+	esac
+done
 #Checks too see if too many valid arguments have been submitted to the command line
 #If so, the proper error message is displayed and the program exits in failure
-if [ $(( helpcounter + listcounter + purgecounter )) \> 1 ]; then
+if [ $(( help_flag + list_flag + purge_flag )) -gt  1 ]; then
         printf "Error: Too many options enabled.\n" >&2
         exit 1
+fi
+
+# Will take action given what flags were entered
+if [ "$help_flag" -eq 1 ];then
+	helpMessage
+	exit 0
+elif [ "$list_flag" -eq 1 ]; then
+	listAll
+	exit 0
+elif [ "$purge_flag" -eq 1 ]; then
+	purgeAll
+	exit 0
 fi
 
 # Process remaining arguments, which should be the folder in which start
