@@ -62,10 +62,8 @@ if [ ! -d ".junk" ]; then
 fi
 
 function listAll(){ #lists all the files in junk directory
-        cd ~/junk
-        for FILE in junk; do
-                echo "$FILE"
-        done
+	cd ~/.junk
+	ls -lAF
 }
 function purgeAll(){ #removes all the files in the junk directory
         cd ~/junk
