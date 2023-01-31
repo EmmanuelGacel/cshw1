@@ -66,10 +66,9 @@ function listAll(){ #lists all the files in junk directory
 	ls -lAF
 }
 function purgeAll(){ #removes all the files in the junk directory
-        cd ~/junk
-        for FILE in junk; do
-                rm "$FILE"
-        done
+        cd ~/.junk # If the line below is redundant, than so is this one.
+        shopt -s dotglob # I have to cite this, possibly redudant.
+	rm -r ~/.junk/*
 }
 
 help_flag=0;
