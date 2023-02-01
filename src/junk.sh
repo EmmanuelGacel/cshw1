@@ -97,29 +97,53 @@ while getopts ":hlp" option; do #checks for flags, given theres one argument
 done
 #Checks too see if too many valid arguments have been submitted to the command line
 #If so, the proper error message is displayed and the program exits in failure
+
+if [ "$help_flag" -eq 1 ] && [ $(( list_flag + purge_flag )) -gt 0 ]; then
+	printf "Error: Too many options enabled.\n" >&2
+	helpMessage
+	exit 1
+fi
+if [ "$list_flag" -eq 1 ] && [ $(( help_flag + purge_flag )) -gt 0 ]; then
+	printf "Error: Too many options enabled.\n" >&2
+	helpMessage
+	exit 1
+fi
+if [ "$purge_flag" -eq 1 ] && [ $(( help_flag + list_flag )) -gt 0 ]; then
+	printf "Error: Too many options enabled.\n" >&2
+	helpMessage
+	exit 1
+fi
+<<extra
 if [ $(( help_flag + list_flag + purge_flag )) -gt  1 ]; then
         printf "Error: Too many options enabled.\n" >&2
 	helpMessage
         exit 1
 fi
+extra
 if [ $(( help_flag + list_flag + purge_flag )) -eq 1 ] && [ $# -gt 1 ];then
 	printf "Error: Too many options enabled.\n" >&2
 	helpMessage
 	exit 1 
 fi
+
+
 # Will take action given what flags were entered
-if [ "$help_flag" -eq 1 ];then
+if [ "$help_flag" -ge 1 ];then
 	helpMessage
 	exit 0
-elif [ "$list_flag" -eq 1 ]; then
+elif [ "$list_flag" -ge 1 ]; then
 	listAll
 	exit 0
-elif [ "$purge_flag" -eq 1 ]; then
+elif [ "$purge_flag" -ge 1 ]; then
 	purgeAll
 	exit 0
 fi
 
-#calls junk_mover for entered files
+#mulitple of the same flag, do not proceed to process text
+if [ $(( help_flag + list_flag + purge_flag )) -eq 1 ] && [ $# -gt 1 ];then
+	exit 0
+fi
+
 
 file_finder(){
 	
