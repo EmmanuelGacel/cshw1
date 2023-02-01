@@ -72,15 +72,19 @@ function purgeAll(){ #removes all the files in the junk directory
 	shopt -u dotglob
 }
 
+<<temp
 # Places a file into the .junk 
 junk_mover(){
-	targetfile=~/dog.txt
+	 
+	targetfile= "$1" #argument passed to the function
 	targetdirectory=~/fish
+
 	file_flag=1
 	directory_flag=1
-	if [ $file_flag -gt 0 ]; then
-        dir=$(dirname "$targetfile")
-        filename="$(basename "$targetfile")"
+
+	if [ $file_flag -gt 0 ]; then 
+        dir=$(dirname "$targetfile") #stores the name of the directory
+        filename="$(basename "$targetfile")" #stores the filename
         cd $dir
         mv $targetfile ~/.junk
 	fi
@@ -90,6 +94,7 @@ junk_mover(){
 	fi
 
 }
+temp
 
 help_flag=0;
 list_flag=0;
@@ -107,7 +112,7 @@ while getopts ":hlp" option; do #checks for flags, given theres one argument
 			(( ++purge_flag ))
 			;;
 		?)
-			printf "Error: Unknown option -${OPTARG}.\n" >&2
+			echo Error: Unknown option -"${OPTARG}".
 			helpMessage
 			exit 1 ;;
 	esac
@@ -135,6 +140,25 @@ elif [ "$purge_flag" -eq 1 ]; then
 	purgeAll
 	exit 0
 fi
+
+#calls junk_mover for entered files
+
+file_finder(){
+	
+	echo "$1"	
+	if [ -f "$1" ]; then
+		mv "$1" ~/.junk
+	elif [ -d "$1" ]; then
+		file_finder $(dirname "$1")
+	else
+		echo Warning: "$1" not found
+	fi
+}
+for filepath in "$@"; do #passes command line arguments to file_finder
+	
+	file_finder "$filepath"	
+done
+
 
 # Process remaining arguments, which should be the folder in which start
 # recursing.
