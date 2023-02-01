@@ -69,6 +69,26 @@ function purgeAll(){ #removes all the files in the junk directory
         cd ~/.junk # If the line below is redundant, than so is this one.
         shopt -s dotglob # I have to cite this, possibly redudant.
 	rm -r ~/.junk/*
+	shopt -u dotglob
+}
+
+# Places a file into the .junk 
+junk_mover(){
+	targetfile=~/dog.txt
+	targetdirectory=~/fish
+	file_flag=1
+	directory_flag=1
+	if [ $file_flag -gt 0 ]; then
+        dir=$(dirname "$targetfile")
+        filename="$(basename "$targetfile")"
+        cd $dir
+        mv $targetfile ~/.junk
+	fi
+
+	if [ $directory_flag -gt 0 ]; then
+        mv $targetdirectory ~/.junk
+	fi
+
 }
 
 help_flag=0;
