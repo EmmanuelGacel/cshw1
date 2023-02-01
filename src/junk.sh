@@ -72,29 +72,7 @@ function purgeAll(){ #removes all the files in the junk directory
 	shopt -u dotglob
 }
 
-<<temp
-# Places a file into the .junk 
-junk_mover(){
 	 
-	targetfile= "$1" #argument passed to the function
-	targetdirectory=~/fish
-
-	file_flag=1
-	directory_flag=1
-
-	if [ $file_flag -gt 0 ]; then 
-        dir=$(dirname "$targetfile") #stores the name of the directory
-        filename="$(basename "$targetfile")" #stores the filename
-        cd $dir
-        mv $targetfile ~/.junk
-	fi
-
-	if [ $directory_flag -gt 0 ]; then
-        mv $targetdirectory ~/.junk
-	fi
-
-}
-temp
 
 help_flag=0;
 list_flag=0;
@@ -145,21 +123,24 @@ fi
 
 file_finder(){
 	
-	echo "$1"	
 	if [ -f "$1" ]; then
 		mv "$1" ~/.junk
 	elif [ -d "$1" ]; then
-		file_finder $(dirname "$1")
+		dir=$(dirname "$1")
+		file=$(basename "$1")
+		cd "$dir"
+		mv basename ~/.junk
 	else
 		echo Warning: "$1" not found
 	fi
 }
+
 for filepath in "$@"; do #passes command line arguments to file_finder
 	
 	file_finder "$filepath"	
 done
 
-
+<<notneeded
 # Process remaining arguments, which should be the folder in which start
 # recursing.
 # Consider ./search.sh -s -d /tmp
@@ -208,4 +189,4 @@ if [ "$directory_flag" -eq 1 ]; then
         echo "$directory_count directories found."
     fi
 fi
-
+notneeded
