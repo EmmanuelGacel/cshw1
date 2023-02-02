@@ -28,7 +28,6 @@ if [ $# -eq 0 ];then #there were no arguments supplied
 fi
 
 # Searches for a junk directory, if not, it creates one
-cd ~
 if [ ! -d ".junk" ]; then
         mkdir .junk
 	readonly var=junk.sh
@@ -120,10 +119,7 @@ file_finder(){
 	if [ -f "$1" ]; then
 		mv "$1" ~/.junk
 	elif [ -d "$1" ]; then
-		dir=$(dirname "$1")
-		file=$(basename "$1")
-		cd "$dir"
-		mv basename ~/.junk
+		mv "$1" ~/.junk
 	else
 		echo Warning: "$1" not found
 	fi
