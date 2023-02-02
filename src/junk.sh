@@ -27,11 +27,12 @@ if [ $# -eq 0 ];then #there were no arguments supplied
 	exit 1
 fi
 
+readonly var=~/.junk.sh
+
 # Searches for a junk directory, if not, it creates one
 if [ ! -d ".junk" ]; then
-        mkdir .junk
-	readonly var=junk.sh
-fi
+        mkdir var
+fi	
 
 function listAll(){ #lists all the files in junk directory
 	cd ~/.junk
