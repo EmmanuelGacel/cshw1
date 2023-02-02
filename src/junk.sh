@@ -28,9 +28,9 @@ if [ $# -eq 0 ];then #there were no arguments supplied
 fi
 
 #readonly var=~/.junk.sh
-directory="$HOMEjunk"
+directory=$HOMEjunk
 # Searches for a junk directory, if not, it creates one
-if [ ! -d "$directory" ]; then
+if [ ! -d $directory ]; then
         #mkdir var
 	mkdir ~/.junk
 fi	
