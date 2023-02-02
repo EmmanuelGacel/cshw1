@@ -3,7 +3,7 @@
 #####################################################
 #Name: junk.sh
 #Authors: Katherine Wimmer and Emmanuel Gacel
-#Version 1.0 02/01/2023
+#Version 2.0 02/01/2023
 #####################################################
 
 
@@ -28,7 +28,7 @@ if [ $# -eq 0 ];then #there were no arguments supplied
 fi
 
 readonly junky=~/.junk
-#directory=$HOMEjunk
+
 # Searches for a junk directory, if not, it creates one
 if [ ! -d $junky ]; then
         mkdir -p $junky
