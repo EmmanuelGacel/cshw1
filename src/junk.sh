@@ -40,9 +40,10 @@ function listAll(){ #lists all the files in junk directory
 	ls -lAF
 	exit 0
 }
+# shopt citation - https://www.gnu.org/software/bash/manual/html_node/Filename-Expansion.html section 3.5.8
 function purgeAll(){ #removes all the files in the junk directory
         cd $junky # If the line below is redundant, than so is this one.
-        shopt -s dotglob 
+	shopt -s dotglob 
 	rm -r $junky/*
 	shopt -u dotglob
 	exit 0
