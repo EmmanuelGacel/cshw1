@@ -2,38 +2,10 @@
 
 #####################################################
 #Name: junk.sh
+#Authors: Katherine Wimmer and Emmanuel Gacel
+#Version 1.0 02/01/2023
 #####################################################
 
-# Use these variables as integers.
-directory_count=0
-symlink_count=0
-
-# Use these variables as booleans.
-directory_flag=0
-symlink_flag=0
-
-# Function to recurse the file system.
-recurse_dir() {
-    # "$1"/* matches all files except hidden files.
-    # "$1"/.[!.]* matches hidden files, but not .. which would lead to
-    # infinite recursion.
-    for file in "$1"/.[!.]* "$1"/*; do
-        # -h tests if a file is a symlink.
-        if [ "$symlink_flag" -eq 1 ] && [ -h "$file" ]; then
-            # readlink prints the location to which the symlink points.
-            echo "symlink  : $file -> $(readlink "$file")"
-            (( ++symlink_count ))
-        fi
-        # -d tests if a file is a directory.
-        if [ -d "$file" ]; then
-            if [ "$directory_flag" -eq 1 ]; then
-                echo "directory: $file"
-                (( ++directory_count ))
-            fi
-            recurse_dir "$file"
-        fi
-    done
-}
 
 # Displays the usage message. Implements basenames to get the file name.
 function helpMessage(){
@@ -59,17 +31,20 @@ fi
 cd ~
 if [ ! -d ".junk" ]; then
         mkdir .junk
+	readonly var=junk.sh
 fi
 
 function listAll(){ #lists all the files in junk directory
 	cd ~/.junk
 	ls -lAF
+	exit 0
 }
 function purgeAll(){ #removes all the files in the junk directory
         cd ~/.junk # If the line below is redundant, than so is this one.
-        shopt -s dotglob # I have to cite this, possibly redudant.
+        shopt -s dotglob 
 	rm -r ~/.junk/*
 	shopt -u dotglob
+	exit 0
 }
 
 	 
@@ -113,13 +88,8 @@ if [ "$purge_flag" -eq 1 ] && [ $(( help_flag + list_flag )) -gt 0 ]; then
 	helpMessage
 	exit 1
 fi
-<<extra
-if [ $(( help_flag + list_flag + purge_flag )) -gt  1 ]; then
-        printf "Error: Too many options enabled.\n" >&2
-	helpMessage
-        exit 1
-fi
-extra
+
+
 if [ $(( help_flag + list_flag + purge_flag )) -eq 1 ] && [ $# -gt 1 ];then
 	printf "Error: Too many options enabled.\n" >&2
 	helpMessage
@@ -164,53 +134,5 @@ for filepath in "$@"; do #passes command line arguments to file_finder
 	file_finder "$filepath"	
 done
 
-<<notneeded
-# Process remaining arguments, which should be the folder in which start
-# recursing.
-# Consider ./search.sh -s -d /tmp
-# $0 is ./search.sh
-# $1 is -s
-# $2 is -d
-# $3 is /tmp
-# $OPTIND is the index of the next argument on the command line, after all
-# flags have been parsed with getopts.
-# We want to shift it so that /tmp is now in $1, so we take 3-1 and left shift
-# 2 places.
-shift "$((OPTIND-1))"
+exit 0 # all files were found and moved into junk directory
 
-# $# gives the number of command line arguments. After shifting, it should just
-# be 1.
-if [ $# -gt 1 ]; then # USER CAN ENTER MULTIPLE FILE NAMES, INCORRECT STATEMENT
-    echo "Error: Too many arguments." >&2
-    exit 1
-elif [ $# -eq 0 ]; then
-    # If not directory was supplied, pass the current directory (.) to the
-    # function.
-    directory_flag=1
-    recurse_dir .
-else
-        symlink_flag=1
-    recurse_dir "$1"
-fi
-
-# Print the counts discovered during the search.
-if [ "$symlink_flag" -eq 1 ]; then
-    if [ "$symlink_count" -eq 1 ]; then
-        echo "1 symlink found."
-    elif [ "$symlink_count" -eq 0 ]; then
-        echo "0 symlinks found."
-    else
-        echo "$symlink_count symlinks found."
-    fi
-fi
-
-if [ "$directory_flag" -eq 1 ]; then
-    if [ "$directory_count" -eq 1 ]; then
-        echo "1 directory found."
-    elif [ "$directory_count" -eq 0 ]; then
-        echo "0 directores found."
-    else
-        echo "$directory_count directories found."
-    fi
-fi
-notneeded
