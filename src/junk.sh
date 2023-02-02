@@ -27,23 +27,23 @@ if [ $# -eq 0 ];then #there were no arguments supplied
 	exit 1
 fi
 
-#readonly var=~/.junk.sh
-directory=$HOMEjunk
+readonly junky=~/.junk
+#directory=$HOMEjunk
 # Searches for a junk directory, if not, it creates one
-if [ ! -d $directory ]; then
-        #mkdir var
-	mkdir ~/.junk
+if [ ! -d $junky ]; then
+        mkdir -p $junky
+	#mkdir ~/.junk
 fi	
 
 function listAll(){ #lists all the files in junk directory
-	cd ~/.junk
+	cd $junky
 	ls -lAF
 	exit 0
 }
 function purgeAll(){ #removes all the files in the junk directory
-        cd ~/.junk # If the line below is redundant, than so is this one.
+        cd $junky # If the line below is redundant, than so is this one.
         shopt -s dotglob 
-	rm -r ~/.junk/*
+	rm -r $junky/*
 	shopt -u dotglob
 	exit 0
 }
@@ -119,9 +119,9 @@ fi
 file_finder(){
 	
 	if [ -f "$1" ]; then
-		mv "$1" ~/.junk
+		mv "$1" $junky
 	elif [ -d "$1" ]; then
-		mv "$1" ~/.junk
+		mv "$1" $junky
 	else
 		echo Warning: "$1" not found
 	fi
